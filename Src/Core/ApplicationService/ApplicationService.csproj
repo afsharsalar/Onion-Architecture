@@ -11,4 +11,8 @@
     <Folder Include="Models\User\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DomainClass\DomainClass.csproj" />
+  </ItemGroup>
+
 </Project>

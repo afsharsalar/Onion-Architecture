@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ApplicationService.Services.UserExam
 {
-    internal class UserExamService
+    public class UserExamService : IUserExamService
     {
     }
 }

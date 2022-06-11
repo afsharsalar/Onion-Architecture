@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ApplicationService.Models.User;
 
 namespace ApplicationService.Services.User
 {
-    public interface IUserService 
+    public interface IUserService
     {
+        DomainClass.User.User Register(AddUserDto model);
     }
 }
