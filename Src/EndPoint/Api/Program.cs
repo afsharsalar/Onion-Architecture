@@ -1,10 +1,16 @@
+using System.Text;
+using ApplicationService.Models.User;
 using ApplicationService.Services.User;
 using ApplicationService.Services.UserExam;
 using DataLayer.SqlServer.Common;
 using DataLayer.SqlServer.Repositories;
 using DomainClass.User;
 using DomainClass.UserExam;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Api
 {
@@ -16,7 +22,11 @@ namespace Api
 
             // Add services to the container.
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers().AddFluentValidation();
+            builder.Services.AddTransient<IValidator<AddUserDto>, AddUserDtoValidation>();
+            builder.Services.AddTransient<IValidator<LoginUserDto>, LoginUserDtoValidation>();
+
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -33,6 +43,27 @@ namespace Api
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IUserRepository, UserRepo>();
 
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                        ValidAudience = builder.Configuration["Jwt:Issuer"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+                    };
+                });
+
+
+
+
+
+
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -44,6 +75,7 @@ namespace Api
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllers();

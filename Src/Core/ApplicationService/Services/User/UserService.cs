@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Permissions;
-using System.Text;
-using System.Threading.Tasks;
-using ApplicationService.Models.User;
+﻿using ApplicationService.Models.User;
 using DomainClass.User;
 
 namespace ApplicationService.Services.User
@@ -31,6 +25,21 @@ namespace ApplicationService.Services.User
             _repository.Insert(user);
             _repository.SaveChanges();
             return user;
+        }
+
+        public DomainClass.User.User GetUserByMobile(string mobile)
+        {
+            return _repository.GetByMobile(mobile);
+        }
+
+        public bool CanLogin(LoginUserDto loginModel)
+        {
+            var user = _repository.GetByMobile(loginModel.Mobile);
+            if (user != null)
+            {
+                return Security.SecurePasswordHasher.Verify(loginModel.Password, user.Password);
+            }
+            return false;
         }
     }
 }
