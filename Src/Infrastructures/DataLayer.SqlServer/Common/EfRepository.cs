@@ -10,11 +10,13 @@ namespace DataLayer.SqlServer.Common
         {
             Context = context;
         }
+
         public void Insert(T entity)
         {
             Context.Add(entity);
             Context.SaveChanges();
         }
+
 
         public void Remove(T entity)
         {
